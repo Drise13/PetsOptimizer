@@ -1,5 +1,7 @@
 ﻿namespace PetsOptimizer;
 
+using MoreLinq.Extensions;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -14,6 +16,8 @@ public class BreedingData
     public IEnumerable<Pet> Pets =>
         pets ??= PetData.Where(p => p.Genetics != PetGenetics.Breeder).Select(petData => new Pet(petData))
             .ToList();
+
+    public IEnumerable<Pet> ShuffledPets => Pets.Shuffle();
 
     public override string ToString()
     {

@@ -2,10 +2,13 @@
 
 public class Pet
 {
+    private readonly PetGenetics genetics;
+
     public Pet(PetData data)
     {
         Species = data.Species;
-        GeneEffect = GeneticFactory.GetGeneticEffect(this, data.Genetics);
+        genetics = data.Genetics;
+        GeneEffect = GeneticFactory.GetGeneticEffect(this, genetics);
         Strength = data.Strength;
     }
 
@@ -14,4 +17,9 @@ public class Pet
     public IGeneEffect GeneEffect { get; }
 
     public double Strength { get; }
+
+    public override string ToString()
+    {
+        return $"{Species} {genetics} {Math.Round(Strength)}";
+    }
 }
