@@ -1,8 +1,10 @@
-﻿namespace PetsOptimizer;
+﻿namespace PetsOptimizer.JsonParser;
 
 using JsonParser;
 
 using Newtonsoft.Json;
+using PetsOptimizer;
+using PetsOptimizer.Genes;
 
 [JsonConverter(typeof(ArrayToObjectConverter<PetData>))]
 public class PetData

@@ -1,8 +1,7 @@
-﻿using System.Collections;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using PetsOptimizer;
+using PetsOptimizer.JsonParser;
 
 var jsonDataString = File.ReadAllText("C:\\Users\\Drise\\cleanBreedingData.json");
 
@@ -13,13 +12,17 @@ IEnumerable<Population> CreatePopulations(int populationCount)
     return Enumerable.Range(0, populationCount).Select(_ => new Population(jsonData));
 }
 
-var populations = CreatePopulations(2000).ToList();
+const int populationSize = 2000;
+const int iterations = 1000;
+
+var populations = CreatePopulations(populationSize).ToList();
 
 var previousBest = -1.0;
 
-foreach (var i in Enumerable.Range(0, 1000))
+foreach (var i in Enumerable.Range(0, iterations))
 {
-    populations = populations.Select(pop => (pop, totalScore: pop.GetTotalScore())).OrderByDescending(pop => pop.totalScore).Select(pop => pop.pop).Take(1000).ToList();
+    populations = populations.Select(pop => (pop, totalScore: pop.GetTotalScore()))
+        .OrderByDescending(pop => pop.totalScore).Select(pop => pop.pop).Take(populationSize / 2).ToList();
 
     if (i % 10 == 0)
     {

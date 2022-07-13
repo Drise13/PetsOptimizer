@@ -1,9 +1,11 @@
-﻿namespace PetsOptimizer;
+﻿namespace PetsOptimizer.JsonParser;
 
 using MoreLinq.Extensions;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+
+using Genes;
 
 public class BreedingData
 {

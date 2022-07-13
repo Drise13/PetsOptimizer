@@ -1,5 +1,9 @@
 ﻿namespace PetsOptimizer;
 
+using Genes;
+
+using JsonParser;
+
 public class Pet
 {
     private readonly PetGenetics genetics;

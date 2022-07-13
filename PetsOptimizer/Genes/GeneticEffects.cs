@@ -1,59 +1,7 @@
-﻿namespace PetsOptimizer;
+﻿// ReSharper disable IdentifierTypo
+namespace PetsOptimizer.Genes;
 
 using static IGeneEffect.GeneApplication;
-
-// sort using http://textmechanic.com/text-tools/basic-text-tools/sort-text-lines/
-// ReSharper disable IdentifierTypo
-public enum PetGenetics
-{
-    Defender = 1,
-    Forager = 2,
-    Fleeter = 3,
-    Breeder = 4,
-    Mercenary = 6,
-    Sniper = 8,
-    Amplifier = 9,
-    Cursory = 12,
-    Fastidious = 13,
-    Opticular = 15,
-    Defstone = 19,
-    Refiller = 22
-}
-
-public interface IGeneEffect
-{
-    public enum GeneApplication
-    {
-        Individual,
-        All
-    }
-
-    public GeneApplication Application { get; }
-
-    public double StrengthMultiplier { get; }
-
-    public bool DoesMultiplierApplyToForaging(Territory territory);
-}
-
-public interface IFighterGeneEffect : IGeneEffect { }
-
-public interface IForagerGeneEffect : IGeneEffect { }
-
-public static class GeneticFactory
-{
-    public static IGeneEffect GetGeneticEffect(Pet pet, PetGenetics petGenetic)
-    {
-        return petGenetic switch
-        {
-            PetGenetics.Forager => new ForagerEffect(),
-            PetGenetics.Fleeter => new FleeterEffect(),
-            PetGenetics.Mercenary => new MercenaryEffect(),
-            PetGenetics.Fastidious => new FastidiousEffect(),
-            PetGenetics.Opticular => new OpticularEffect(pet),
-            _ => new NoEffect(pet)
-        };
-    }
-}
 
 public class NoEffect : IGeneEffect
 {

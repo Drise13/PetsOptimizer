@@ -1,6 +1,8 @@
 ﻿// ReSharper disable StringLiteralTypo
 namespace PetsOptimizer;
 
+using Genes;
+
 public class Territory
 {
     public Territory(Population parentPopulation, IEnumerable<Pet> pets, int territoryPosition)
@@ -28,13 +30,6 @@ public class Territory
     {
         return $"{TerritoryNames[TerritoryPosition]}\t\tExpected Power: {Math.Round(GetTotalForagePower())}" + $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
     }
-
-    //public void Mutate()
-    //{
-    //    var swappingPet = Population.BreedingData.Pets.Except(Pets).RandomSubset(1);
-
-    //    Population.Territories.Where(t => t != this).Shuffle().First()
-    //}
 
     public double GetTotalForagePower()
     {

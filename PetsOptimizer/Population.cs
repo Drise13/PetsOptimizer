@@ -1,5 +1,7 @@
 ﻿namespace PetsOptimizer;
 
+using JsonParser;
+
 using MoreLinq.Extensions;
 
 public class Population
@@ -16,21 +18,20 @@ public class Population
     {
         BreedingData = other.BreedingData;
 
-        Territories = other.Territories.Select(t => new Territory(this, new List<Pet>(t.Pets), t.TerritoryPosition)).ToList();
+        Territories = other.Territories.Select(t => new Territory(this, new List<Pet>(t.Pets), t.TerritoryPosition))
+            .ToList();
 
         Mutate();
-    }
-
-    public void WriteToFile()
-    {
-        using var file = File.CreateText("best-result.txt");
-
-        file.WriteLine(string.Join("\n", Territories.Select(t => t.ToString())));
     }
 
     public BreedingData BreedingData { get; }
 
     public List<Territory> Territories { get; }
+
+    public double GetTotalScore()
+    {
+        return Territories.Select((t, i) => t.GetTotalForagePower() * (1 + i * 0.1)).Sum();
+    }
 
     public void Mutate()
     {
@@ -69,8 +70,10 @@ public class Population
         }
     }
 
-    public double GetTotalScore()
+    public void WriteToFile()
     {
-        return Territories.Select((t, i) => t.GetTotalForagePower() * (1 + i * 0.1)).Sum();
+        using var file = File.CreateText("best-result.txt");
+
+        file.WriteLine(string.Join("\n", Territories.Select(t => t.ToString())));
     }
 }
