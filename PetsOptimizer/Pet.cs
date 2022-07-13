@@ -1,23 +1,17 @@
 ﻿namespace PetsOptimizer;
 
-using System.Text;
-
-using JsonParser;
-
-using Newtonsoft.Json;
-
-
-
-[JsonConverter(typeof(ArrayToObjectConverter<Pet>))]
 public class Pet
 {
-    [JsonArrayIndex(0)] public Species Species { get; set; }
+    public Pet(PetData data)
+    {
+        Species = data.Species;
+        GeneEffect = GeneticFactory.GetGeneticEffect(this, data.Genetics);
+        Strength = data.Strength;
+    }
 
-    [JsonArrayIndex(1)] public PetGenetics Genetics { get; set; }
+    public Species Species { get; }
 
-    [JsonArrayIndex(2)] public double Strength { get; set; }
+    public IGeneEffect GeneEffect { get; }
 
-    [JsonArrayIndex(3)] public double Unknown { get; set; }
-
-    public bool IsFighter => Genetics != PetGenetics.Breeder;
+    public double Strength { get; }
 }

@@ -1,0 +1,22 @@
+﻿namespace PetsOptimizer;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+public class BreedingData
+{
+    public List<PetData> PetData { get; set; }
+    public int Territories { get; set; }
+    public double FightContribution { get; set; }
+
+    private List<Pet>? pets;
+
+    public IEnumerable<Pet> Pets =>
+        pets ??= PetData.Where(p => p.Genetics != PetGenetics.Breeder).Select(petData => new Pet(petData))
+            .ToList();
+
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter());
+    }
+}

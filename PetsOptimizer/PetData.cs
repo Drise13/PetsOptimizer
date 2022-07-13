@@ -1,15 +1,17 @@
 ﻿namespace PetsOptimizer;
 
+using JsonParser;
+
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
-internal class PetData
+[JsonConverter(typeof(ArrayToObjectConverter<PetData>))]
+public class PetData
 {
-    public List<Pet> Pets { get; set; }
-    public int Territories { get; set; }
+    [JsonArrayIndex(0)] public Species Species { get; set; }
 
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter());
-    }
+    [JsonArrayIndex(1)] public PetGenetics Genetics { get; set; }
+
+    [JsonArrayIndex(2)] public double Strength { get; set; }
+
+    [JsonArrayIndex(3)] public double Unknown { get; set; }
 }
