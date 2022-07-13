@@ -1,4 +1,5 @@
-﻿namespace PetsOptimizer;
+﻿// ReSharper disable StringLiteralTypo
+namespace PetsOptimizer;
 
 public class Territory
 {
@@ -25,7 +26,7 @@ public class Territory
 
     public override string ToString()
     {
-        return $"Territory {TerritoryPosition + 1}\tExpected Power: {Math.Round(GetTotalForagePower())}" + $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
+        return $"{TerritoryNames[TerritoryPosition]}\t\tExpected Power: {Math.Round(GetTotalForagePower())}" + $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
     }
 
     //public void Mutate()
@@ -95,5 +96,26 @@ public class Territory
         100000,
         175000,
         300000
+    };
+
+    public static readonly List<string> TerritoryNames = new List<string>
+    {
+        "Grasslands",
+        "Jungle",
+        "Encroaching Forest",
+        "Tree Interior",
+        "Stinky Sewers",
+        "Desert Oasis",
+        "Beach Docks",
+        "Coarse Mountains",
+        "Twilight Desert",
+        "The Crypt",
+        "Frosty Peaks",
+        "Tundra Outback",
+        "Crystal Caverns",
+        "Pristalle Lake",
+        "Nebulon Mantle",
+        "Starfield Skies",
+        "Shores of Eternity",
     };
 }
