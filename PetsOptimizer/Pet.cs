@@ -24,6 +24,6 @@ public class Pet
 
     public override string ToString()
     {
-        return $"{Species} {genetics} {Math.Round(Strength)}";
+        return $"{Species} {genetics} {Math.Floor(Strength)}";
     }
 }

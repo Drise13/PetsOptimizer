@@ -30,14 +30,21 @@ public class Population
 
     public double GetTotalScore()
     {
-        return Territories.Select((t, i) => t.GetTotalForagePower() * (1 + i * 0.1)).Sum();
+        double sum = 0;
+
+        for (var i = 0; i < Territories.Count; ++i)
+        {
+            sum += Territories[i].GetTotalForagePower() * (1 + i * 0.1);
+        }
+
+        return sum;
     }
 
     public void Mutate()
     {
         var removedPets = new List<Pet>();
 
-        foreach (var pet in BreedingData.Pets.RandomSubset(4))
+        foreach (var pet in BreedingData.Pets.RandomSubset(6))
         {
             if (removedPets.Contains(pet))
             {
@@ -48,7 +55,7 @@ public class Population
 
             if (foundTerritory == null)
             {
-                var randomTerritory = Territories.RandomSubset(1).First();
+                var randomTerritory = Territories[Random.Shared.Next(Territories.Count)];
 
                 var index = Random.Shared.Next(randomTerritory.Pets.Count);
 

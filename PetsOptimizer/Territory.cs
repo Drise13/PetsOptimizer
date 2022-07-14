@@ -28,16 +28,33 @@ public class Territory
 
     public override string ToString()
     {
-        return $"{TerritoryNames[TerritoryPosition]}\t\tExpected Power: {Math.Round(GetTotalForagePower())}" + $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
+        return $"{TerritoryNames[TerritoryPosition]}\t\tExpected Power: {Math.Floor(GetTotalForagePower())}" + $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
     }
 
     public double GetTotalForagePower()
     {
-        var totalRawPower =
-            Pets.Where(p => p.GeneEffect is IForagerGeneEffect).Sum(p => p.Strength) *
-            Population.BreedingData.FightContribution +
-            Pets.Where(p => p.GeneEffect is IFighterGeneEffect).Select(p =>
-                p.GeneEffect is MercenaryEffect effect ? p.Strength * effect.StrengthMultiplier : p.Strength).Sum();
+        var totalRawPower = 0.0;
+
+        foreach (var pet in Pets)
+        {
+            switch (pet.GeneEffect)
+            {
+                case MercenaryEffect mercenaryEffect:
+                    totalRawPower += pet.Strength * mercenaryEffect.StrengthMultiplier;
+
+                    break;
+
+                case IFighterGeneEffect:
+                    totalRawPower += pet.Strength;
+
+                    break;
+
+                case IForagerGeneEffect:
+                    totalRawPower += pet.Strength * Population.BreedingData.FightContribution;
+
+                    break;
+            }
+        }
 
         if (totalRawPower < TerritoryPowerRequirements[TerritoryPosition])
         {
@@ -46,7 +63,7 @@ public class Territory
 
         var usefulPets = Pets.Where(p => p.GeneEffect.DoesMultiplierApplyToForaging(this));
 
-        var petForagingPower = Pets.ToDictionary(p => p, p => p.GeneEffect is IForagerGeneEffect ? p.Strength : 0);
+        var petForagingPower = Pets.ToDictionary(pet => pet, pet => pet.GeneEffect is IForagerGeneEffect ? pet.Strength : 0);
 
         foreach (var usefulPet in usefulPets)
         {
@@ -59,7 +76,7 @@ public class Territory
 
                 case IGeneEffect.GeneApplication.All:
                 {
-                    foreach (var pet in petForagingPower.Keys.ToList())
+                    foreach (var pet in petForagingPower.Keys)
                     {
                         petForagingPower[pet] *= usefulPet.GeneEffect.StrengthMultiplier;
                     }

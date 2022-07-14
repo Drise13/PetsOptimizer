@@ -25,6 +25,11 @@ public class ArrayToObjectConverter<T> : JsonConverter where T : class, new()
     {
         JArray array = JArray.Load(reader);
 
+        if (array.First.ToString() == "none")
+        {
+            return default;
+        }
+
         var propsByIndex = typeof(T).GetProperties()
             .Where(p => p.CanRead && p.CanWrite && p.GetCustomAttribute<JsonArrayIndexAttribute>() != null)
             .ToDictionary(p => p.GetCustomAttribute<JsonArrayIndexAttribute>().Index);

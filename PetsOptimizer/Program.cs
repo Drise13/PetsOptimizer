@@ -1,50 +1,65 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics;
+
+using Newtonsoft.Json;
 
 using PetsOptimizer;
 using PetsOptimizer.JsonParser;
 
-var jsonDataString = File.ReadAllText("C:\\Users\\Drise\\cleanBreedingData.json");
+var jsonDataString = File.ReadAllText(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+    "IdleonSaver", "idleon_save.json"));
 
-var jsonData = JsonConvert.DeserializeObject<BreedingData>(jsonDataString);
+var data = JsonConvert.DeserializeObject<BreedingData>(jsonDataString);
 
 IEnumerable<Population> CreatePopulations(int populationCount)
 {
-    return Enumerable.Range(0, populationCount).Select(_ => new Population(jsonData));
+    return Enumerable.Range(0, populationCount).Select(_ => new Population(data));
 }
 
-const int populationSize = 2000;
+const int populationSize = 5000;
 const int iterations = 1000;
 
 var populations = CreatePopulations(populationSize).ToList();
 
 var previousBest = -1.0;
 
+var stopwatch = new Stopwatch();
+
+stopwatch.Start();
+
+var frameTimings = new List<long>(iterations);
+
 foreach (var i in Enumerable.Range(0, iterations))
 {
-    populations = populations.Select(pop => (pop, totalScore: pop.GetTotalScore()))
-        .OrderByDescending(pop => pop.totalScore).Select(pop => pop.pop).Take(populationSize / 2).ToList();
+    populations = populations.AsParallel().OrderByDescending(pop => pop.GetTotalScore()).Take(populationSize / 2)
+        .ToList();
 
     if (i % 10 == 0)
     {
-        var newBest = Math.Round(populations.First().GetTotalScore());
+        var newBest = Math.Floor(populations.First().GetTotalScore());
 
-        if (newBest == -1)
+        if (newBest < 0)
         {
             previousBest = newBest;
         }
 
-        Console.WriteLine($"Current iteration: {i} \t\t Best Score: {newBest} {Math.Round((newBest - previousBest) / previousBest * 100, 2)}%");
+        var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        frameTimings.Add(elapsedMilliseconds);
+
+        Console.WriteLine(
+            $"Iteration: {i} \t\t Best Score: {newBest} \t{Math.Round((newBest - previousBest) / previousBest * 100, 2)}%\t\t {elapsedMilliseconds}ms");
 
         previousBest = newBest;
+
+        stopwatch.Restart();
     }
 
-    var newPopulations = populations.Select(pop => new Population(pop)).ToList();
+    var newPopulations = populations.AsParallel().Select(pop => new Population(pop)).ToList();
 
     populations.AddRange(newPopulations);
 }
 
 var bestPopulation = populations.First();
 
-Console.WriteLine(bestPopulation.GetTotalScore());
+Console.WriteLine($"Average frame time: {frameTimings.Average()}ms");
 
 bestPopulation.WriteToFile();
