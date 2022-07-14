@@ -27,6 +27,18 @@ public class NoEffect : IGeneEffect
     }
 }
 
+public class NoEffectFighter : NoEffect, IFighterGeneEffect
+{
+    public NoEffectFighter(Pet pet, PetGenetics petGenetic)
+        : base(pet, petGenetic) { }
+}
+
+public class NoEffectForager : NoEffect, IForagerGeneEffect
+{
+    public NoEffectForager(Pet pet, PetGenetics petGenetic)
+        : base(pet, petGenetic) { }
+}
+
 public class ForagerEffect : IForagerGeneEffect
 {
     public IGeneEffect.GeneApplication Application => Individual;
