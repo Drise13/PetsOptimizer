@@ -1,5 +1,7 @@
 ﻿namespace PetsOptimizer.Genes;
 
+using System.Diagnostics;
+
 public static class GeneticFactory
 {
     public static IGeneEffect GetGeneticEffect(Pet pet, PetGenetics petGenetic)
@@ -11,7 +13,8 @@ public static class GeneticFactory
             PetGenetics.Mercenary => new MercenaryEffect(),
             PetGenetics.Fastidious => new FastidiousEffect(),
             PetGenetics.Opticular => new OpticularEffect(pet),
-            _ => new NoEffect(pet)
+            PetGenetics.Tsar => new TsarEffect(),
+            _ => new NoEffect(pet, petGenetic)
         };
     }
 }
