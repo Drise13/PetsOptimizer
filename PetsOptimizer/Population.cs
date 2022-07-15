@@ -1,5 +1,7 @@
 ﻿namespace PetsOptimizer;
 
+using Genes;
+
 using JsonParser;
 
 using MoreLinq.Extensions;
@@ -28,13 +30,127 @@ public class Population
 
     public List<Territory> Territories { get; }
 
+    private void PrepareTerritoryMultipliers()
+    {
+        foreach (var territory in Territories)
+        {
+            territory.ResetRegionalMultipliers();
+        }
+
+        foreach (var territory in Territories)
+        {
+            foreach (var territoryPet in territory.Pets)
+            {
+                if (territoryPet.GeneEffect.Application == IGeneEffect.GeneApplication.Regional)
+                {
+                    var territoryPosition = territory.TerritoryPosition;
+                    var multiplier = territoryPet.GeneEffect.StrengthMultiplier;
+                    var petEffect = territoryPet.GeneEffect;
+
+                    switch (territoryPosition)
+                    {
+                        case > 0 when territoryPosition < Territories.Count:
+                            AdjustMiddleTerritory(petEffect, territoryPosition, multiplier);
+
+                            break;
+
+                        case 0:
+                            AdjustTopTerritory(petEffect, territoryPosition, multiplier);
+
+                            break;
+
+                        case > 0 when territoryPosition == Territories.Count - 1:
+                            AdjustBottomTerritory(petEffect, territoryPosition, multiplier);
+
+                            break;
+                    }
+                }
+            }
+
+        }
+
+        void AdjustTerritoryForagingAbove(int territoryPosition, double multiplier)
+        {
+            Territories[territoryPosition - 1].RegionalForagingMultiplier *= multiplier;
+        }
+
+        void AdjustTerritoryForagingBelow(int territoryPosition, double multiplier)
+        {
+            Territories[territoryPosition + 1].RegionalForagingMultiplier *= multiplier;
+        }
+
+        void AdjustTerritoryFightingAbove(int territoryPosition, double multiplier)
+        {
+            Territories[territoryPosition - 1].RegionalFightingMultiplier *= multiplier;
+        }
+
+        void AdjustTerritoryFightingBelow(int territoryPosition, double multiplier)
+        {
+            Territories[territoryPosition + 1].RegionalFightingMultiplier *= multiplier;
+        }
+
+        void AdjustMiddleTerritory(IGeneEffect geneEffect, int territoryPosition, double multiplier)
+        {
+            switch (geneEffect)
+            {
+                case IForagerGeneEffect:
+                    AdjustTerritoryForagingAbove(territoryPosition, multiplier);
+                    AdjustTerritoryForagingBelow(territoryPosition, multiplier);
+
+                    break;
+
+                case IFighterGeneEffect:
+                    AdjustTerritoryFightingAbove(territoryPosition, multiplier);
+                    AdjustTerritoryFightingBelow(territoryPosition, multiplier);
+
+                    break;
+            }
+        }
+
+        void AdjustTopTerritory(IGeneEffect geneEffect, int territoryPosition, double multiplier)
+        {
+            switch (geneEffect)
+            {
+                case IForagerGeneEffect:
+                    AdjustTerritoryForagingBelow(territoryPosition, multiplier);
+
+                    break;
+
+                case IFighterGeneEffect:
+                    AdjustTerritoryFightingBelow(territoryPosition, multiplier);
+
+                    break;
+            }
+        }
+
+        void AdjustBottomTerritory(IGeneEffect geneEffect, int territoryPosition, double multiplier)
+        {
+            switch (geneEffect)
+            {
+                case IForagerGeneEffect:
+                    AdjustTerritoryForagingAbove(territoryPosition, multiplier);
+
+                    break;
+
+                case IFighterGeneEffect:
+                    AdjustTerritoryFightingAbove(territoryPosition, multiplier);
+
+                    break;
+            }
+        }
+    }
+
     public double GetTotalScore()
     {
+        PrepareTerritoryMultipliers();
+
         double sum = 0;
 
         for (var i = 0; i < Territories.Count; ++i)
         {
-            sum += Territories[i].GetTotalForagePower() * (1 + i * 0.1);
+            var territory = Territories[i];
+
+            sum += territory.GetTotalForagePower() * (1 + i * 0.1);
         }
 
         return sum;
@@ -44,7 +160,7 @@ public class Population
     {
         var removedPets = new List<Pet>();
 
-        foreach (var pet in BreedingData.Pets.RandomSubset(6))
+        foreach (var pet in BreedingData.Pets.RandomSubset(Random.Shared.Next(0, Math.Min(5, BreedingData.PetCount))))
         {
             if (removedPets.Contains(pet))
             {
@@ -80,6 +196,8 @@ public class Population
     public void WriteToFile()
     {
         using var file = File.CreateText("best-result.txt");
+
+        file.WriteLine($"Overall power: {Math.Floor(Territories.Sum(t => t.GetTotalForagePower())):n0}\n");
 
         file.WriteLine(string.Join("\n", Territories.Select(t => t.ToString())));
     }

@@ -29,8 +29,17 @@ public class BreedingData
 
     [JsonIgnore]
     public IEnumerable<Pet> Pets =>
-        pets ??= PetData.Concat(PetsStored).Where(p => p != null && p.Genetics != PetGenetics.Breeder)
-            .Select(petData => new Pet(petData)).ToList();
+        pets ??= PetData.Concat(PetsStored)
+            .Where(p => p is
+            {
+                //Excluding foragers that typically reside in the fence yard
+                Genetics: not PetGenetics.Breeder or PetGenetics.Special or PetGenetics.Eggshell or PetGenetics.Trasher
+            })
+            .Select(petData => new Pet(petData))
+            .ToList();
+
+    [JsonIgnore]
+    public int PetCount => pets?.Count ?? 0;
 
     [JsonIgnore] public IEnumerable<Pet> ShuffledPets => Pets.Shuffle();
 

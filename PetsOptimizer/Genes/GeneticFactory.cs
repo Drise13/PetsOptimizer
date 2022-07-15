@@ -12,8 +12,14 @@ public static class GeneticFactory
             PetGenetics.Fleeter => new FleeterEffect(),
             PetGenetics.Mercenary => new MercenaryEffect(),
             PetGenetics.Fastidious => new FastidiousEffect(),
+            PetGenetics.Flashy => new FlashyEffect(),
             PetGenetics.Opticular => new OpticularEffect(pet),
+            PetGenetics.Targeter => new TargeterEffect(pet),
+            PetGenetics.Miasma => new MiasmaEffect(pet),
+            PetGenetics.Borger => new BorgerEffect(pet),
+
             PetGenetics.Tsar => new TsarEffect(),
+            PetGenetics.Badumdum => new BadumdumEffect(),
 
             PetGenetics.Fighter or
                 PetGenetics.Defender or

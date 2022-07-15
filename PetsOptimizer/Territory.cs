@@ -22,13 +22,30 @@ public class Territory
 
     public readonly int TerritoryPosition;
 
+    /// <summary>
+    /// This is set by other Territories where they have pets that influence the foraging multiplier for this one, see effect Badumdum
+    /// </summary>
+    public double RegionalForagingMultiplier { get; set; } = 1.0;
+
+    /// <summary>
+    /// This is set by other Territories where they have pets that influence this one, see effect Tsar
+    /// </summary>
+    public double RegionalFightingMultiplier { get; set; } = 1.0;
+
     public List<Pet> Pets { get; }
 
     public Population Population { get; }
 
     public override string ToString()
     {
-        return $"{TerritoryNames[TerritoryPosition]}\t\tExpected Power: {Math.Floor(GetTotalForagePower())}" + $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
+        return $"{TerritoryNames[TerritoryPosition],-25} Expected Power: {Math.Floor(GetTotalForagePower()):n0}" +
+               $"\n\t{string.Join("\n\t", Pets.Select(p => p.ToString()))}\n";
+    }
+
+    public void ResetRegionalMultipliers()
+    {
+        RegionalForagingMultiplier = 1.0;
+        RegionalFightingMultiplier = 1.0;
     }
 
     public double GetTotalForagePower()
@@ -56,21 +73,21 @@ public class Territory
             }
         }
 
-        if (totalRawPower < TerritoryPowerRequirements[TerritoryPosition])
+        if (totalRawPower * RegionalFightingMultiplier < TerritoryPowerRequirements[TerritoryPosition])
         {
             return 0;
         }
 
-        var usefulPets = Pets.Where(p => p.GeneEffect.DoesMultiplierApplyToForaging(this));
+        var foragingMultiplierPets = Pets.Where(p => p.GeneEffect is IForagerGeneEffect && p.GeneEffect.DoesMultiplierApplyToForaging(this));
 
         var petForagingPower = Pets.ToDictionary(pet => pet, pet => pet.GeneEffect is IForagerGeneEffect ? pet.Strength : 0);
 
-        foreach (var usefulPet in usefulPets)
+        foreach (var foragingMultiplierPet in foragingMultiplierPets)
         {
-            switch (usefulPet.GeneEffect.Application)
+            switch (foragingMultiplierPet.GeneEffect.Application)
             {
                 case IGeneEffect.GeneApplication.Individual:
-                    petForagingPower[usefulPet] *= usefulPet.GeneEffect.StrengthMultiplier;
+                    petForagingPower[foragingMultiplierPet] *= foragingMultiplierPet.GeneEffect.StrengthMultiplier;
 
                     break;
 
@@ -78,7 +95,7 @@ public class Territory
                 {
                     foreach (var pet in petForagingPower.Keys)
                     {
-                        petForagingPower[pet] *= usefulPet.GeneEffect.StrengthMultiplier;
+                        petForagingPower[pet] *= foragingMultiplierPet.GeneEffect.StrengthMultiplier;
                     }
 
                     break;
@@ -86,10 +103,18 @@ public class Territory
             }
         }
 
+        if (RegionalForagingMultiplier > 1.0)
+        {
+            foreach (var pet in petForagingPower.Keys)
+            {
+                petForagingPower[pet] *= RegionalForagingMultiplier;
+            }
+        }
+
         return petForagingPower.Values.Sum();
     }
 
-    public static readonly List<int> TerritoryPowerRequirements = new List<int>
+    public static readonly IReadOnlyList<int> TerritoryPowerRequirements = new List<int>()
     {
         0,
         5,
@@ -110,7 +135,7 @@ public class Territory
         300000
     };
 
-    public static readonly List<string> TerritoryNames = new List<string>
+    public static readonly IReadOnlyList<string> TerritoryNames = new List<string>
     {
         "Grasslands",
         "Jungle",

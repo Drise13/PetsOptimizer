@@ -7,7 +7,8 @@ public interface IGeneEffect
     public enum GeneApplication
     {
         Individual,
-        All
+        All,
+        Regional
     }
 
     public GeneApplication Application { get; }
