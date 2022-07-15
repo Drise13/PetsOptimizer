@@ -1,5 +1,7 @@
 using System.Diagnostics;
 
+using CommandLine;
+
 using MoreLinq;
 
 using Newtonsoft.Json;
@@ -7,8 +9,9 @@ using Newtonsoft.Json;
 using PetsOptimizer;
 using PetsOptimizer.JsonParser;
 
-var jsonDataString = File.ReadAllText(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-    "IdleonSaver", "idleon_save.json"));
+var parsedArgs = Parser.Default.ParseArguments<Options>(args);
+
+var jsonDataString = File.ReadAllText(parsedArgs.Value.FilePath);
 
 var data = JsonConvert.DeserializeObject<BreedingData>(jsonDataString);
 
@@ -17,9 +20,6 @@ IEnumerable<Population> CreatePopulations(int populationCount)
     return Enumerable.Range(0, populationCount).Select(_ => new Population(data));
 }
 
-const int populationSize = 5000;
-const int iterations = 1300;
-const int runs = 1;
 const int outputIteration = 10;
 
 var bestPopulations = new List<Population>();
@@ -28,22 +28,22 @@ var stopwatch = new Stopwatch();
 
 stopwatch.Start();
 
-var frameTimings = new List<long>(iterations * runs);
+var frameTimings = new List<long>(parsedArgs.Value.Iterations * parsedArgs.Value.Runs);
 
-foreach (var r in Enumerable.Range(0, runs))
+foreach (var r in Enumerable.Range(0, parsedArgs.Value.Runs))
 {
-    var populations = CreatePopulations(populationSize).ToList();
+    var populations = CreatePopulations(parsedArgs.Value.PopulationSize).ToList();
 
     var previousBest = -1.0;
 
-    foreach (var i in Enumerable.Range(0, iterations))
+    foreach (var i in Enumerable.Range(0, parsedArgs.Value.Iterations))
     {
         populations = populations.AsParallel()
             .OrderByDescending(pop => pop.GetTotalScore())
-            .Take(populationSize / 2)
+            .Take(parsedArgs.Value.PopulationSize / 2)
             .ToList();
 
-        populations.Skip(Math.Max(1, populationSize / 10)).AsParallel().ForEach(pop => pop.Mutate());
+        populations.Skip(Math.Max(1, parsedArgs.Value.PopulationSize / 10)).AsParallel().ForEach(pop => pop.Mutate());
 
         if (i % outputIteration == 0)
         {
@@ -72,7 +72,7 @@ foreach (var r in Enumerable.Range(0, runs))
 
     bestPopulations.Add(populations.First());
 
-    if (r + 1 != runs)
+    if (r + 1 != parsedArgs.Value.Runs)
     {
         Console.WriteLine($"Running again... Run number: {r + 1}\n\n");
     }
