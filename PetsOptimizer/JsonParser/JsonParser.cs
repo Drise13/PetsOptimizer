@@ -1,13 +1,14 @@
 ﻿namespace PetsOptimizer.JsonParser;
 
-using System.Reflection;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System.Reflection;
+
 public class JsonArrayIndexAttribute : Attribute
 {
-    public int Index { get; private set; }
+    public int Index { get; }
+
     public JsonArrayIndexAttribute(int index)
     {
         Index = index;
@@ -23,7 +24,7 @@ public class ArrayToObjectConverter<T> : JsonConverter where T : class, new()
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-        JArray array = JArray.Load(reader);
+        var array = JArray.Load(reader);
 
         if (array.First.ToString() == "none")
         {
@@ -34,7 +35,7 @@ public class ArrayToObjectConverter<T> : JsonConverter where T : class, new()
             .Where(p => p.CanRead && p.CanWrite && p.GetCustomAttribute<JsonArrayIndexAttribute>() != null)
             .ToDictionary(p => p.GetCustomAttribute<JsonArrayIndexAttribute>().Index);
 
-        JObject obj = new JObject(array
+        var obj = new JObject(array
             .Select((jt, i) =>
             {
                 PropertyInfo prop;
@@ -43,16 +44,13 @@ public class ArrayToObjectConverter<T> : JsonConverter where T : class, new()
             .Where(jp => jp != null)
         );
 
-        T target = new T();
+        var target = new T();
         serializer.Populate(obj.CreateReader(), target);
 
         return target;
     }
 
-    public override bool CanWrite
-    {
-        get { return false; }
-    }
+    public override bool CanWrite => false;
 
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {

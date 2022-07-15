@@ -92,14 +92,14 @@ public class Territory
                     break;
 
                 case IGeneEffect.GeneApplication.All:
-                {
-                    foreach (var pet in petForagingPower.Keys)
                     {
-                        petForagingPower[pet] *= foragingMultiplierPet.GeneEffect.StrengthMultiplier;
-                    }
+                        foreach (var pet in petForagingPower.Keys)
+                        {
+                            petForagingPower[pet] *= foragingMultiplierPet.GeneEffect.StrengthMultiplier;
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 

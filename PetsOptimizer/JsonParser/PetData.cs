@@ -1,10 +1,10 @@
 ﻿namespace PetsOptimizer.JsonParser;
 
-using JsonParser;
-
 using Newtonsoft.Json;
+
 using PetsOptimizer;
-using PetsOptimizer.Genes;
+
+using Genes;
 
 [JsonConverter(typeof(ArrayToObjectConverter<PetData>))]
 public class PetData
@@ -15,5 +15,5 @@ public class PetData
 
     [JsonArrayIndex(2)] public double Strength { get; set; }
 
-    [JsonArrayIndex(3)] public double Unknown { get; set; }
+    [JsonArrayIndex(3)] public double Special { get; set; }
 }

@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 using MoreLinq;
 
 using Newtonsoft.Json;
 
 using PetsOptimizer;
-using PetsOptimizer.Genes;
 using PetsOptimizer.JsonParser;
 
 var jsonDataString = File.ReadAllText(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),

@@ -2,6 +2,8 @@
 
 `PetsOptimizer` is a genetic algorithm that produces high quality pet arrays for the Breeding skill in the game "Legends of Idleon".
 
+<sup><sub>I'm also jealous of the name `Cogstruction` (an inspiration for this project) and am soliciting ideas for a better "clever" name.</sub></sup>
+
 # Dependencies
 
 We rely on having access to the JSON save data file used by Idleon. This data file contains all the information about your current game state including what pets you have, what territories you have unlocked, and what breeding upgrades you have. We rely on using https://github.com/desophos/idleon-saver to get this data file. For our purposes, we can use the data it saves directly without having to use an "export" method. Idleon-Saver puts your save file in `%appdata%/IdleonSaver/idleon_save.json` where we can read and get the information we need. Simply follow the instructions to run the application and we should be able to find the file. If you wish to provide an alternate file location, you can run the program with the `file` flag set. See `Running the application` for more details.

@@ -1,7 +1,4 @@
 ﻿namespace PetsOptimizer.Genes;
-
-using System.Diagnostics;
-
 public static class GeneticFactory
 {
     public static IGeneEffect GetGeneticEffect(Pet pet, PetGenetics petGenetic)
