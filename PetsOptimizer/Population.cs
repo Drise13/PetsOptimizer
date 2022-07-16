@@ -49,7 +49,7 @@ public class Population
 
                     switch (territoryPosition)
                     {
-                        case > 0 when territoryPosition < Territories.Count:
+                        case > 0 when territoryPosition < Territories.Count - 1:
                             AdjustMiddleTerritory(petEffect, territoryPosition, multiplier);
 
                             break;
