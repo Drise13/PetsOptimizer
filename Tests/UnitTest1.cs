@@ -158,4 +158,44 @@ public class UnitTest1
         Assert.InRange(population.Territories[1].GetTotalForagePower(), 50000, 51000);
         Assert.InRange(population.Territories[2].GetTotalForagePower(), 423000, 425000);
     }
+
+    [Fact]
+    public void ValidateMiasmaApplication_TrueIfAllUnique()
+    {
+        // This is super hacky and I hate it but I needed a quick test
+        var jsonDataString = File.ReadAllText(new Options().FilePath);
+
+        var data = JsonConvert.DeserializeObject<BreedingData>(jsonDataString);
+
+        var territory = new Territory(new Population(data),
+            new[]
+            {
+                new Pet(new PetData
+                {
+                    Genetics = PetGenetics.Miasma,
+                    Species = Species.WodeBoard,
+                    Strength = 8298
+                }),
+                new Pet(new PetData
+                {
+                    Genetics = PetGenetics.Miasma,
+                    Species = Species.WodeBoard,
+                    Strength = 8298
+                }),
+                new Pet(new PetData
+                {
+                    Genetics = PetGenetics.Miasma,
+                    Species = Species.WodeBoard,
+                    Strength = 8298
+                }),
+                new Pet(new PetData
+                {
+                    Genetics = PetGenetics.Miasma,
+                    Species = Species.WodeBoard,
+                    Strength = 8298
+                })
+            }, 0);
+
+        Assert.False(territory.Pets[0].GeneEffect.DoesMultiplierApplyToForaging(territory));
+    }
 }
