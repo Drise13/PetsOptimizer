@@ -126,11 +126,12 @@ public class TsarEffect : IFighterGeneEffect
 public class BadumdumEffect : IForagerGeneEffect
 {
     public IGeneEffect.GeneApplication Application => Regional;
-    public double StrengthMultiplier => 1.5;
+    public double StrengthMultiplier => 1.2;
 
     public bool DoesMultiplierApplyToForaging(Territory territory)
     {
-        return false;
+        // I don't think this is the right interpretation of "all pets above and below", but Lava's math says it does.
+        return true;
     }
 }
 
