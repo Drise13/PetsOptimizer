@@ -181,7 +181,7 @@ public class MiasmaEffect : IForagerGeneEffect
 
     public bool DoesMultiplierApplyToForaging(Territory territory)
     {
-        return territory.Pets.Select(p => p.GeneEffect).Distinct().Count() == territory.Pets.Count;
+        return territory.Pets.Select(p => p.GeneEffect.GetType()).Distinct().Count() == territory.Pets.Count;
     }
 }
 
