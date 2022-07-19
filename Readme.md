@@ -40,6 +40,40 @@ How many iterations run the algorithm. In my testing, I generally found I had co
 
 How many pet arrays to test each iteration. The more pet arrays, generally the better, but it comes with an increased time per iteration. 5000 is probably on the excessive side, but gives a decent variety for the algorithm to work with. I found that with 5000 pet arrays, I had an average iteration time of 25ms.
 
+## Territory priority override: `o[verride]`
+
+### Default Value: `Not set`
+
+A user provided list of one or more territories to prioritize during optimization score calculations.
+
+To prioritize the 5th territory, input `5`.
+To prioritize multiple territories, input for example `1,2,3,4`.
+The territories can be referenced below:
+
+```
+('Grasslands', 1)
+('Jungle', 2)
+('Encroaching Forest', 3)
+('Tree Interior', 4)
+('Stinky Sewers', 5)
+('Desert Oasis', 6)
+('Beach Docks', 7)
+('Coarse Mountains', 8)
+('Twilight Desert', 9)
+('The Crypt', 10)
+('Frosty Peaks', 11)
+('Tundra Outback', 12)
+('Crystal Caverns', 13)
+('Pristalle Lake', 14)
+('Nebulon Mantle', 15)
+('Starfield Skies', 16)
+('Shores of Eternity', 17)
+```
+
+This list is one based, so to prioritize the first territory (`Grasslands`), use `1`, etc.
+
+If set, score calculations are adjusted from positionally prioritizing the later territories incrementally to applying a blanket `1.5` or `0.5` based on priority or not, respectively.
+
 # How it works
 
 A genetic algorithm is based off the principle of natural selection. The algorithm works as follows.
@@ -59,4 +93,4 @@ There is also a mechanism to run the algorithm several times and choose the best
 
 # Results
 
-Results are written to the execution directory, so if you run the application in `C:/My/Special/Folders/` it will output `best-result.txt` in that folder. It prints each territory with each pet in the specific position (top down equals left to right in-game). Pet positions within a territory are important since there are above / below interactions to keep in mind. It also prints the expected territory forage power, this should match what you see in game, at least until Lava add some gem-based boost modifiers like he has with Flaggy Rate in Construction. If the rate doesn't match (with adjustments for rounding), open an issue with you JSON save file and I can take a look when I have time.
+Results are written to the execution directory, so if you run the application in `C:/My/Special/Folders/` it will output `best-result.txt` in that folder. It prints each territory with each pet in the specific position (top down equals left to right in-game). Pet positions within a territory are important since there are above / below interactions to keep in mind. It also prints the expected territory forage power, this should match what you see in game, at least until Lava add some gem-based boost modifiers like he has with Flaggy Rate in Construction. If the rate doesn't match (with adjustments for rounding), open an issue with your JSON save file and I can take a look when I have time.

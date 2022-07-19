@@ -15,6 +15,8 @@ var jsonDataString = File.ReadAllText(parsedArgs.Value.FilePath);
 
 var data = JsonConvert.DeserializeObject<BreedingData>(jsonDataString);
 
+data.Overrides = parsedArgs.Value.Priorities;
+
 IEnumerable<Population> CreatePopulations(int populationCount)
 {
     return Enumerable.Range(0, populationCount).Select(_ => new Population(data));

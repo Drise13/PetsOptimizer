@@ -146,11 +146,21 @@ public class Population
 
         double sum = 0;
 
-        for (var i = 0; i < Territories.Count; ++i)
+        // If the user wants to call out specific territories to prioritize,
+        // then multiply priority scores by 1.5 and others by 0.5
+        if (BreedingData.Overrides?.Count > 0)
         {
-            var territory = Territories[i];
-
-            sum += territory.GetTotalForagePower() * (1 + i * 0.1);
+            for (var i = 0; i < Territories.Count; ++i)
+            {
+                sum += Territories[i].GetTotalForagePower() * (BreedingData.Overrides[i] ? 1.5 : 0.5);
+            }
+        }
+        else
+        {
+            for (var i = 0; i < Territories.Count; ++i)
+            {
+                sum += Territories[i].GetTotalForagePower() * (1 + i * 0.1);
+            }
         }
 
         return sum;

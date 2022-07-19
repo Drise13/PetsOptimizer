@@ -43,6 +43,8 @@ public class BreedingData
 
     [JsonIgnore] public IEnumerable<Pet> ShuffledPets => Pets.Shuffle();
 
+    [JsonIgnore] public List<bool>? Overrides { get; set; }
+
     public override string ToString()
     {
         return JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter());
