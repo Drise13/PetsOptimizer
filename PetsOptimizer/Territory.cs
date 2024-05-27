@@ -121,16 +121,23 @@ public class Territory
         100,
         250,
         600,
-        1100,
-        1750,
+        900,
+        1250,
+        2000,
         3000,
-        5000,
-        10000,
+        4500,
+        6500,
+        9000,
+        13250,
+        17000,
         25000,
-        40000,
-        100000,
-        175000,
-        300000
+        45000,
+        75000,
+        110000,
+        200000,
+        400000,
+        850000,
+        1500000
     };
 
     public static readonly IReadOnlyList<string> TerritoryNames = new List<string>
@@ -152,5 +159,12 @@ public class Territory
         "Nebulon Mantle",
         "Starfield Skies",
         "Shores of Eternity",
+        "Molten Bay",
+        "Smokey Lake",
+        "Wurm Catacombs",
+        "Spirit Fields",
+        "Bamboo Forest",
+        "Lullaby Airways",
+        "Dharma Mesa"
     };
 }

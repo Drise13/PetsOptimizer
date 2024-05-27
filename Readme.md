@@ -68,6 +68,13 @@ The territories can be referenced below:
 ('Nebulon Mantle', 15)
 ('Starfield Skies', 16)
 ('Shores of Eternity', 17)
+('Molten Bay', 18)
+('Smokey Lake', 19)
+('Wurm Catacombs', 20)
+('Spirit Fields', 21)
+('Bamboo Forest', 22)
+('Lullaby Airways', 23)
+('Dharma Mesa', 24)
 ```
 
 This list is one based, so to prioritize the first territory (`Grasslands`), use `1`, etc.
