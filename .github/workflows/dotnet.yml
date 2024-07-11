@@ -24,33 +24,65 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Publish
-      run: dotnet publish --configuration Release --output ./publish --no-build
+    - name: Publish for Ubuntu
+      run: dotnet publish --configuration Release --output ./publish/ubuntu --no-build
 
-    - name: Archive Artifacts
-      run: zip -r PetsOptimizer.zip ./publish
+    - name: Archive Ubuntu Artifacts
+      run: zip -r PetsOptimizer-ubuntu.zip ./publish/ubuntu
 
-    - name: Upload Artifact
+    - name: Upload Ubuntu Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: publish
-        path: PetsOptimizer.zip
+        name: publish-ubuntu
+        path: PetsOptimizer-ubuntu.zip
 
-  create_release:
-    runs-on: ubuntu-latest
-    needs: build
+  build_windows:
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download build artifacts
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'  # Adjust to your .NET version
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish for Windows
+      run: dotnet publish --configuration Release --output ./publish/windows --no-build --runtime win-x64
+
+    - name: Archive Windows Artifacts
+      run: Compress-Archive -Path ./publish/windows -DestinationPath PetsOptimizer-windows.zip
+
+    - name: Upload Windows Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: publish-windows
+        path: PetsOptimizer-windows.zip
+
+  create_release:
+    runs-on: ubuntu-latest
+    needs: [build, build_windows]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download Ubuntu build artifacts
       uses: actions/download-artifact@v2
       with:
-        name: publish
+        name: publish-ubuntu
 
-    - name: Unzip Artifacts
-      run: unzip PetsOptimizer.zip
+    - name: Download Windows build artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: publish-windows
 
     - name: Create GitHub Release
       id: create_release
@@ -63,12 +95,22 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release Asset
+    - name: Upload Ubuntu Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./PetsOptimizer.zip
-        asset_name: PetsOptimizer.zip  # Adjust as needed
+        asset_path: ./PetsOptimizer-ubuntu.zip
+        asset_name: PetsOptimizer-ubuntu.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./PetsOptimizer-windows.zip
+        asset_name: PetsOptimizer-windows.zip
         asset_content_type: application/zip
