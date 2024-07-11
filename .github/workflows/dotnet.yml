@@ -55,7 +55,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Publish for Windows
-      run: dotnet publish --configuration Release --output ./publish/windows --no-build --runtime win-x64
+      run: dotnet publish --configuration Release --output ./publish/windows --no-build
 
     - name: Archive Windows Artifacts
       run: Compress-Archive -Path ./publish/windows -DestinationPath PetsOptimizer-windows.zip
