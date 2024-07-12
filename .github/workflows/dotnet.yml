@@ -28,13 +28,13 @@ jobs:
       run: dotnet publish --configuration Release --output ./publish/ubuntu --no-build
 
     - name: Archive Ubuntu Artifacts
-      run: zip -r PetsOptimizer-ubuntu.zip ./publish/ubuntu
+      run: zip -r "PetsOptimizer-${{ github.ref }}-ubuntu.zip" ./publish/ubuntu
 
     - name: Upload Ubuntu Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: publish-ubuntu
-        path: PetsOptimizer-ubuntu.zip
+        name: "publish-ubuntu-${{ github.ref }}"
+        path: "PetsOptimizer-${{ github.ref }}-ubuntu.zip"
 
   build_windows:
     runs-on: windows-latest
@@ -58,13 +58,13 @@ jobs:
       run: dotnet publish --configuration Release --output ./publish/windows --no-build
 
     - name: Archive Windows Artifacts
-      run: Compress-Archive -Path ./publish/windows -DestinationPath PetsOptimizer-windows.zip
+      run: Compress-Archive -Path ./publish/windows -DestinationPath "PetsOptimizer-${{ github.ref }}-windows.zip"
 
     - name: Upload Windows Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: publish-windows
-        path: PetsOptimizer-windows.zip
+        name: "publish-windows-${{ github.ref }}"
+        path: "PetsOptimizer-${{ github.ref }}-windows.zip"
 
   create_release:
     runs-on: ubuntu-latest
@@ -77,12 +77,12 @@ jobs:
     - name: Download Ubuntu build artifacts
       uses: actions/download-artifact@v2
       with:
-        name: publish-ubuntu
+        name: "publish-ubuntu-${{ github.ref }}"
 
     - name: Download Windows build artifacts
       uses: actions/download-artifact@v2
       with:
-        name: publish-windows
+        name: "publish-windows-${{ github.ref }}"
 
     - name: Create GitHub Release
       id: create_release
@@ -101,8 +101,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./PetsOptimizer-ubuntu.zip
-        asset_name: PetsOptimizer-ubuntu.zip
+        asset_path: "PetsOptimizer-${{ github.ref }}-ubuntu.zip"
+        asset_name: "PetsOptimizer-${{ github.ref }}-ubuntu.zip"
         asset_content_type: application/zip
 
     - name: Upload Windows Release Asset
@@ -111,6 +111,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./PetsOptimizer-windows.zip
-        asset_name: PetsOptimizer-windows.zip
+        asset_path: "PetsOptimizer-${{ github.ref }}-windows.zip"
+        asset_name: "PetsOptimizer-${{ github.ref }}-windows.zip"
         asset_content_type: application/zip
